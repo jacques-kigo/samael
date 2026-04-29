@@ -51,7 +51,7 @@ xmlsec1 --sign --privkey-der ec_private.der,ec_cert.der --output response_signed
 
 # Generating encrypted responses for tests
 
-The `response_encrypted_aes{192,256}_cbc.xml` and `response_encrypted_valid_aes{192,256}_cbc.xml` fixtures are generated with `xmlsec1 --encrypt`, using the existing `sp_cert.pem` / `sp_private.pem` keypair (rsa-oaep-mgf1p key transport).
+The `response_encrypted_aes{192,256}_{cbc,gcm}.xml` and `response_encrypted_valid_aes{192,256}_{cbc,gcm}.xml` fixtures are generated with `xmlsec1 --encrypt`, using the existing `sp_cert.pem` / `sp_private.pem` keypair (rsa-oaep-mgf1p key transport).
 
 Step 1 — extract the plaintext assertion from the existing AES-128-CBC fixture (the `<xenc:EncryptedData>` element is self-contained namespace-wise, so it can be passed directly to `xmlsec1 --decrypt`):
 
@@ -68,7 +68,7 @@ xmlsec1 --decrypt --lax-key-search --privkey-pem sp_private.pem,sp_cert.pem /tmp
     | tail -n +2 > /tmp/plaintext_assertion.xml
 ```
 
-Step 2 — create an encryption template per algorithm. Example for AES-256-CBC (substitute `aes192-cbc` for the AES-192-CBC variant):
+Step 2 — create an encryption template per algorithm. Example for AES-256-CBC (substitute `aes192-cbc` for the AES-192-CBC variant, or use the `xmlenc11` namespace and `aes{192,256}-gcm` for GCM):
 
 ```xml
 <xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" Type="http://www.w3.org/2001/04/xmlenc#Element">
